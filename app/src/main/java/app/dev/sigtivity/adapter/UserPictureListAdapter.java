@@ -61,49 +61,6 @@ public class UserPictureListAdapter extends BaseAdapter {
         view.setId(photo.getPictureId());
         ImageView imageView = (ImageView) view.findViewById(R.id.takenImg);
         Picasso.with(context).load(photo.getThumbnail()).into(imageView);
-//        if(photo.getBitmap() != null){
-//            ImageView imageView = (ImageView) view.findViewById(R.id.takenImg);
-//            imageView.setImageBitmap(photo.getBitmap());
-//        }else{
-//            PhotoAndView pictureAndView = new PhotoAndView();
-//            pictureAndView.photo = photo;
-//            pictureAndView.view = view;
-//            new ImageLoader().execute(pictureAndView);
-//        }
-
         return view;
-    }
-
-    class PhotoAndView{
-        public Photo photo;
-        public View view;
-        public Bitmap bitmap;
-    }
-
-    private class ImageLoader extends AsyncTask<PhotoAndView, Void, PhotoAndView>{
-
-        @Override
-        protected PhotoAndView doInBackground(PhotoAndView... params) {
-            PhotoAndView container = params[0];
-            Photo picture = container.photo;
-            try{
-                InputStream stream = (InputStream) new URL(picture.getImageUrl()).getContent();
-                Bitmap bitmap = BitmapFactory.decodeStream(stream);
-                stream.close();
-                container.bitmap = bitmap;
-                return container;
-            }catch(Exception ex){
-                ex.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(PhotoAndView photoAndView) {
-            ImageView imageView = (ImageView) photoAndView.view.findViewById(R.id.takenImg);
-            imageView.setImageBitmap(photoAndView.bitmap);
-            photoAndView.photo.setBitmap(photoAndView.bitmap);
-        }
     }
 }

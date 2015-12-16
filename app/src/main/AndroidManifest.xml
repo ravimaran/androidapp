@@ -85,14 +85,6 @@
             android:label="@string/title_activity_activity_photo_caption" >
         </activity>
         <activity
-            android:name=".RecyclerViewActivity"
-            android:label="ActivityRecyclerView" >
-        </activity>
-        <activity
-            android:name=".Main2Activity"
-            android:label="@string/title_activity_main2" >
-        </activity>
-        <activity
             android:name=".ActivityEditProfile"
             android:label="@string/title_activity_activity_edit_profile" >
         </activity>

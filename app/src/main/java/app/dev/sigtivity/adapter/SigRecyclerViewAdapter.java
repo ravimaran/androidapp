@@ -1,6 +1,7 @@
 package app.dev.sigtivity.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import app.dev.sigtivity.ActivityImageDetail;
 import app.dev.sigtivity.CircularNetworkImageView;
 import app.dev.sigtivity.R;
 import app.dev.sigtivity.core.CircleTransform;
@@ -36,10 +39,9 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
     private static SigClickListener sigClickListener;
     private ImageLoader imageLoader;
     private Context context;
-    private ProfileImageLoader profileImageLoader;
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        NetworkImageView imgView;
+        ImageView imgView;
         ImageView profileImgView;
         TextView caption;
         TextView userNameTextView;
@@ -47,11 +49,14 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
         TextView txtComments;
         TextView txtLikes;
         TextView txtImgDate;
+        ProgressBar progressBar;
 
+        int pictureId;
 
-        public DataObjectHolder(View itemView){
+        public DataObjectHolder(final View itemView){
             super(itemView);
-            imgView = (NetworkImageView)itemView.findViewById(R.id.hotSpotImg);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBarEventPicture);
+            imgView = (ImageView)itemView.findViewById(R.id.hotSpotImg);
             profileImgView = (ImageView)itemView.findViewById(R.id.hotSpotProfileImg);
             caption = (TextView)itemView.findViewById(R.id.editTextPhotoCaption);
             userNameTextView = (TextView)itemView.findViewById(R.id.hotSpotProfileName);
@@ -59,12 +64,26 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
             txtComments = (TextView)itemView.findViewById(R.id.txtCommentCount);
             txtLikes = (TextView)itemView.findViewById(R.id.txtLikesCount);
             txtImgDate = (TextView)itemView.findViewById(R.id.txtImgDate);
+            imgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sigClickListener.onItemClick(getPosition(), imgView, pictureId);
+                }
+            });
+
+            profileImgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sigClickListener.onItemClick(getPosition(), profileImgView, pictureId);
+                }
+            });
+
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            sigClickListener.onItemClick(getPosition(), v);
+            sigClickListener.onItemClick(getPosition(), v, pictureId);
         }
     }
 
@@ -75,7 +94,6 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
     public SigRecyclerViewAdapter(List<Photo> mDataset, Context context){
         this.mDataset = mDataset;
         this.context = context;
-        profileImageLoader = new ProfileImageLoader(context);
     }
 
     @Override
@@ -88,13 +106,13 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        //holder.imgView.setImageDrawable(null);
         Photo photo = mDataset.get(position);
-        imageLoader = CustomVolleyRequest.getInstance(context).getImageLoader();
-        imageLoader.get(photo.getImageUrl(), ImageLoader.getImageListener(holder.imgView, R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
-        holder.imgView.setImageUrl(photo.getImageUrl(), imageLoader);
-//        imageLoader.get(photo.getProfileImgUrl(), ImageLoader.getImageListener(holder.profileImgView, R.drawable.ic_default_profile, R.drawable.ic_default_profile));
-//        holder.profileImgView.setImageUrl(photo.getProfileImgUrl(), imageLoader);
+        holder.pictureId = photo.getPictureId();
+//        imageLoader = CustomVolleyRequest.getInstance(context).getImageLoader();
+//        imageLoader.get(photo.getImageUrl(), ImageLoader.getImageListener(holder.imgView, R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
+        Picasso.with(context).load(photo.getImageUrl()).into(holder.imgView);
+        holder.progressBar.setVisibility(View.GONE);
+        //holder.imgView.setImageUrl(photo.getImageUrl(), imageLoader);
         Picasso.with(context).load(photo.getProfileImgUrl()).transform(new CircleTransform()).into(holder.profileImgView);
         holder.caption.setText(photo.getPhotoCaption());
         holder.userNameTextView.setText(photo.getUserName());
@@ -120,7 +138,7 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
     }
 
     public interface SigClickListener {
-        void onItemClick(int position, View v);
+        void onItemClick(int position, View v, int elementId);
     }
 
 }

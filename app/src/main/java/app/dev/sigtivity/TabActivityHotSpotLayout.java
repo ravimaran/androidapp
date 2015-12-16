@@ -34,6 +34,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -324,34 +325,22 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
     private void displayEventPhotos(){
         if(currentView == CurrentView.ListView) {
             hotSpotGridView.setVisibility(View.GONE);
-            //hotSpotListView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
-            //HotSpotPhotoAdapter adapter = new HotSpotPhotoAdapter(getApplicationContext(), eventPhotos);
-            //hotSpotListView.setAdapter(adapter);
             mAdapter = new SigRecyclerViewAdapter(eventPhotos, this);
             ((SigRecyclerViewAdapter)mAdapter).setOnItemClickListner(new SigRecyclerViewAdapter.SigClickListener(){
                 @Override
-                public void onItemClick(int position, View v) {
-                    // Nothing happens yet
-
+                public void onItemClick(int position, View v, int elementId) {
+                    if(R.id.hotSpotImg == v.getId()){
+                        Intent i = new Intent().setClass(v.getContext(), ActivityImageDetail.class);
+                        i.putExtra("picture_id", elementId);
+                        i.setAction(Intent.ACTION_MAIN);
+                        i.addCategory(Intent.CATEGORY_LAUNCHER);
+                        startActivity(i);
+                    }
                 }
             });
 
             mRecyclerView.setAdapter(mAdapter);
-//            hotSpotListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    int pictureId = view.getId();
-//                    TextView textView = (TextView) view.findViewById(R.id.imageUrl);
-//                    Intent i = new Intent().setClass(view.getContext(), ActivityImageDetail.class);
-//                    i.putExtra("picture_id", pictureId);
-//                    i.putExtra("picture_url", textView.getText());
-//                    i.setAction(Intent.ACTION_MAIN);
-//                    i.addCategory(Intent.CATEGORY_LAUNCHER);
-//
-//                    startActivity(i);
-//                }
-//            });
         }
 
         if(currentView == CurrentView.GridView){

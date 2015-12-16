@@ -154,13 +154,6 @@ public class TabActivityProfile extends Activity {
     }
 
     public void displayPictureGrid(){
-//        int picCount = userPhotos.size();
-//        if(picCount < 4){
-//            userPicturesGrid.setNumColumns(1);
-//        }else if(picCount < 7){
-//            userPicturesGrid.setNumColumns(2);
-//        }
-
         UserPictureListAdapter adapter = new UserPictureListAdapter(getApplicationContext(), userPhotos);
         userPicturesGrid.setAdapter(adapter);
         userPicturesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -178,12 +171,6 @@ public class TabActivityProfile extends Activity {
 
     // Internal classes starts here
     public class UserPicsLoader extends  AsyncTask<String, String, String>{
-
-        @Override
-        protected void onPreExecute() {
-            //progressBar.setVisibility(View.VISIBLE);
-        }
-
         @Override
         protected String doInBackground(String... params) {
             int id = Integer.parseInt(params[0]);
@@ -194,7 +181,6 @@ public class TabActivityProfile extends Activity {
         protected void onPostExecute(String content) {
             userPhotos = app.dev.sigtivity.parser.JSONParser.parsePhotos(content);
             displayPictureGrid();
-            //progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -241,7 +227,6 @@ public class TabActivityProfile extends Activity {
         i.addCategory(Intent.CATEGORY_LAUNCHER);
         startActivity(i);
         return false;
-        //return super.onOptionsItemSelected(item);
     }
 
     // Stats click-able events

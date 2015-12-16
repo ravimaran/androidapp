@@ -96,18 +96,6 @@ public class ActivityImageDetail extends Activity {
     }
 
     private void initializeEvents(){
-        // Enable comment edit text to set focus
-//        editTextComment.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    setFocusOnCommentEditText(true);
-//                }
-//
-//                return false;
-//            }
-//        });
-
         // hide keyboard if set out of focus
         editTextComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -147,11 +135,6 @@ public class ActivityImageDetail extends Activity {
         requestPackage.setUri(String.format("http://giftandevent.com/comment/getComments/%s", String.valueOf(pictureId)));
         return requestPackage;
     }
-//
-//    private void setFocusOnCommentEditText(boolean hasFocus){
-//        editTextComment.setFocusableInTouchMode(hasFocus);
-//        editTextComment.setFocusable(hasFocus);
-//    }
 
     private static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
@@ -171,20 +154,6 @@ public class ActivityImageDetail extends Activity {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1)) + 70;
         listView.setLayoutParams(params);
     }
-
-//    // overrides and public methods
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        if(ev.getAction() == MotionEvent.ACTION_DOWN) {
-//            View v = getCurrentFocus();
-//            if (v instanceof EditText) {
-//                setFocusOnCommentEditText(false);
-//                hideKeyboard(v);
-//            }
-//        }
-//
-//        return super.dispatchTouchEvent(ev);
-//    }
 
     public void addComment(View v){
         String commentText = String.valueOf(editTextComment.getText());
@@ -266,48 +235,6 @@ public class ActivityImageDetail extends Activity {
             bindImageDetail();
         }
     }
-
-//    private class ImageViewLoader extends AsyncTask<String, Void, Bitmap> {
-//        ImageView imgView;
-//        boolean circularImage;
-//        public ImageViewLoader(ImageView imgView, boolean circularImage){
-//            this.imgView = imgView;
-//            this.circularImage = circularImage;
-//        }
-//
-//        @Override
-//        protected Bitmap doInBackground(String... params) {
-//            String pictureUrl = params[0];
-//            try{
-//                InputStream stream = (InputStream) new URL(pictureUrl).getContent();
-//                Bitmap bitmap = BitmapFactory.decodeStream(stream);
-//                stream.close();
-//                return  bitmap;
-//            }catch(Exception ex){
-//                ex.printStackTrace();
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Bitmap bitmap) {
-//            if(circularImage){
-//                loadCircularImage(bitmap);
-//            }else{
-//                loadNormalImage(bitmap);
-//            }
-//        }
-//
-//        private void loadNormalImage(Bitmap bitmap){
-//            imgView.setImageBitmap(bitmap);
-//        }
-//
-//        private void loadCircularImage(Bitmap bitmap){
-//            CircularImage circularImage = new CircularImage(bitmap);
-//            imgView.setImageDrawable(circularImage);
-//        }
-//    }
 
     private class AddAndRefreshComments extends AsyncTask<RequestPackage, String, String>{
         @Override

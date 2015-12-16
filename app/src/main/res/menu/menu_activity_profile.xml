@@ -1,0 +1,8 @@
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_profile_setting"
+        android:icon="@drawable/ic_action_setting_white"
+        android:title="Setting"
+        android:showAsAction="ifRoom"
+        tools:ignore="AppCompatResource" />
+</menu>

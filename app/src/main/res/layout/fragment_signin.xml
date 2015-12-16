@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/dialog_roundedge"
+    android:minWidth="300dp"
+    android:minHeight="200dp"
+    android:padding="10dp"
+    android:weightSum="100"
+    android:fadingEdge="vertical"
+    android:radius="7dp"
+    android:fitsSystemWindows="true">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnActionClose"
+            android:src="@drawable/ic_action_close_blue"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:id="@+id/txtEmail"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:hint="Email"
+        android:layout_weight="20"
+        style="@style/input_text"
+        android:fontFamily="sans-serif"
+        android:inputType="textEmailAddress"
+        android:paddingLeft="5sp" />
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:id="@+id/txtPassword"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:hint="Password"
+        android:password="true"
+        android:inputType="textPassword"
+        android:layout_weight="20"
+        android:fontFamily="sans-serif"
+        android:layout_marginTop="15sp"
+        style="@style/input_text" />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:textSize="10sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/holo_red_dark"
+        android:id="@+id/txtLoginErrMessage"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_weight="20">
+        <Button
+            android:text="SIGN IN"
+            android:padding="15sp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnFragementSignIn"
+            android:textColor="#ffffff"
+            android:background="@drawable/button_blue"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+</LinearLayout>

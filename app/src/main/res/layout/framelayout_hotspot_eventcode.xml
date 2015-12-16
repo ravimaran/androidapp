@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/linerLayoutHotSpotEventCode">
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/loginbg5"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        android:id="@+id/eventCodeBGImgView"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="250sp"
+        android:padding="20sp"
+        android:background="#ccffffff"
+        android:layout_centerInParent="true">
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtEventTitle"
+            android:text="Jack and Jill Wedding"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtEventLocationName"
+            android:text="Princess banquet hall"
+            android:textColor="#505050"
+            android:textSize="15sp"
+            android:layout_below="@id/txtEventTitle"
+            android:gravity="center_horizontal"/>
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/txtEventCode"
+            android:gravity="center_horizontal"
+            style="@style/input_text"
+            android:padding="10sp"
+            android:background="#ccffffff"
+            android:hint="Enter event code"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnJoinEvent"
+            android:background="@drawable/button_blue"
+            android:text="JOIN"
+            android:padding="5sp"
+            android:textColor="#ffffff"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:onClick="joinEvent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200 joined"
+            android:layout_alignBottom="@id/btnJoinEvent"
+            android:layout_alignParentRight="true"
+            android:textColor="#505050"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:drawableLeft="@drawable/ic_group"
+            android:id="@+id/txtParticipantsCount"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200 joined"
+            android:layout_alignBottom="@id/btnJoinEvent"
+            android:layout_alignParentLeft="true"
+            android:textColor="#505050"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:drawableLeft="@drawable/ic_photos"
+            android:id="@+id/txtTotalPhotosCount"/>
+    </RelativeLayout>
+</RelativeLayout>

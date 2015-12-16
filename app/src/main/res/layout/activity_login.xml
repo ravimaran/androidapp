@@ -1,0 +1,60 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/loginbg2"
+    android:weightSum="100">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="70"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:background="@android:color/transparent" />
+    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_weight="15"
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+        <Button
+            android:text="SIGN UP"
+            android:textColor="#ffffff"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:padding="15dp"
+            android:background="@drawable/button_blue"
+            android:id="@+id/btnSignUp"
+            android:layout_gravity="bottom" />
+        <View
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:background="#00000000" />
+        <Button
+            android:text="SIGN IN"
+            android:textColor="#ffffff"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            android:padding="15dp"
+            android:background="@drawable/button_blue"
+            android:id="@+id/btnSignIn"
+            android:layout_gravity="bottom" />
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_height="0dp"
+        android:layout_weight="15"
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent">
+        <Button
+            android:background="@drawable/f"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnFbSignIn"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+</LinearLayout>

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
@@ -105,13 +106,24 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
     }
 
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
+    public void onBindViewHolder(final DataObjectHolder holder, int position) {
         Photo photo = mDataset.get(position);
         holder.pictureId = photo.getPictureId();
 //        imageLoader = CustomVolleyRequest.getInstance(context).getImageLoader();
 //        imageLoader.get(photo.getImageUrl(), ImageLoader.getImageListener(holder.imgView, R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
-        Picasso.with(context).load(photo.getImageUrl()).into(holder.imgView);
-        holder.progressBar.setVisibility(View.GONE);
+        Picasso.with(context).load(photo.getImageUrl()).placeholder(R.drawable.whiteboard).into(holder.imgView, new Callback() {
+            @Override
+            public void onSuccess() {
+                holder.imgView.setVisibility(View.VISIBLE);
+                holder.progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+
         //holder.imgView.setImageUrl(photo.getImageUrl(), imageLoader);
         Picasso.with(context).load(photo.getProfileImgUrl()).transform(new CircleTransform()).into(holder.profileImgView);
         holder.caption.setText(photo.getPhotoCaption());

@@ -42,7 +42,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".TabActivityHotSpot"
+            android:name=".TabActivityHotSpot_Remove"
             android:label="@string/title_activity_activity_hot_spot"
             android:screenOrientation="portrait" >
         </activity>
@@ -76,7 +76,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".TabActivityHotSpotLayout"
+            android:name=".TabActivityHotSpot"
             android:label="@string/title_activity_tab_activity_hot_spot_layout"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>

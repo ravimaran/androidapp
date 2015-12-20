@@ -97,7 +97,7 @@ public class ActivityEditProfile extends Activity{
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             profilePicPath = cursor.getString(columnIndex);
             cursor.close();
-            Bitmap bm = ImageHelper.DecodeSampledBitmapFromFile(profilePicPath, 200, 200); // BitmapFactory.decodeFile(picturePath);
+            Bitmap bm = ImageHelper.decodeSampledBitmapFromFile(profilePicPath, 200, 200); // BitmapFactory.decodeFile(picturePath);
             if(bm != null) {
                 scaledFile = new File(getProfileImageFile().getAbsolutePath());
                 try {

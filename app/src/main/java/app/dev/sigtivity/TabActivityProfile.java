@@ -41,9 +41,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.MissingResourceException;
 
 import app.dev.sigtivity.adapter.UserPictureListAdapter;
 import app.dev.sigtivity.core.CircleTransform;
+import app.dev.sigtivity.core.GlobalConstants;
 import app.dev.sigtivity.core.ImageManager;
 import app.dev.sigtivity.core.PreferenceManager;
 import app.dev.sigtivity.domain.Photo;
@@ -61,12 +63,13 @@ public class TabActivityProfile extends Activity {
     GridView userPicturesGrid;
     List<Photo> userPhotos;
     private User user;
+    private int profileId;
 
     private TextView editTextProfileTitle;
     private TextView editTextProfileName;
     private ImageView profileImageView;
 
-    private String userId;
+    //private String userId;
     private Button btnPictureCount;
     private Button btnEventCount;
     private Button btnNetworkCount;
@@ -74,8 +77,6 @@ public class TabActivityProfile extends Activity {
     private FrameLayout profileFrameLayout;
     private int currentLayout = 1;
     private int previousLayout = 0;
-
-    private ProfileImageLoader profileImageLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +96,7 @@ public class TabActivityProfile extends Activity {
     }
 
     private void initialize(){
-        userId = PreferenceManager.getUserId(this);
-        profileImageLoader = new ProfileImageLoader(this);
+        setProfileId();
         //initiate profile controls
         editTextProfileName = (TextView)findViewById(R.id.txtViewProfileName);
         editTextProfileTitle = (TextView)findViewById(R.id.textViewProfileTitle);
@@ -110,8 +110,8 @@ public class TabActivityProfile extends Activity {
 
     private void loadUserInfo(){
         final RequestPackage requestPackage = new RequestPackage();
-        requestPackage.setParam("user_id", userId);
-        requestPackage.setUri("http://giftandevent.com/auth/profile/" + userId + "/0/");
+        requestPackage.setParam("user_id", String.valueOf(profileId));
+        requestPackage.setUri(String.format("http://giftandevent.com/auth/profile/%d//0/", profileId));
 
         new LoadUser(this).execute(requestPackage);
     }
@@ -134,7 +134,7 @@ public class TabActivityProfile extends Activity {
                     setSelectedStat(btnPictureCount);
                     LayoutInflater.from(getApplicationContext()).inflate(R.layout.framelayout_profile_pictures, profileFrameLayout, true);
                     userPicturesGrid = (GridView) profileFrameLayout.findViewById(R.id.gridViewProfilePics);
-                    new UserPicsLoader().execute(userId);
+                    new UserPicsLoader().execute(String.valueOf(profileId));
                     break;
             }
         }
@@ -153,6 +153,14 @@ public class TabActivityProfile extends Activity {
         clickedBtn.setTextColor(Color.parseColor("#0099cc"));
     }
 
+    private void setProfileId(){
+        int userId = Integer.parseInt(PreferenceManager.getUserId(this));
+        profileId = getIntent().getIntExtra(GlobalConstants.KEY_PROFILE_ID, userId);
+        if(getIntent().hasExtra(GlobalConstants.KEY_PROFILE_ID)){
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
     public void displayPictureGrid(){
         UserPictureListAdapter adapter = new UserPictureListAdapter(getApplicationContext(), userPhotos);
         userPicturesGrid.setAdapter(adapter);
@@ -161,7 +169,7 @@ public class TabActivityProfile extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int pictureId = view.getId();
                 Intent i = new Intent().setClass(view.getContext(), ActivityImageDetail.class);
-                i.putExtra("picture_id", pictureId);
+                i.putExtra(GlobalConstants.KEY_PICTURE_ID, pictureId);
                 i.setAction(Intent.ACTION_MAIN);
                 i.addCategory(Intent.CATEGORY_LAUNCHER);
                 startActivity(i);
@@ -247,4 +255,5 @@ public class TabActivityProfile extends Activity {
         currentLayout = 3;
         loadFrameLayout();
     }
+
 }

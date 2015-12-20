@@ -1,6 +1,5 @@
 package app.dev.sigtivity;
 
-import android.app.ActionBar;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -35,7 +34,7 @@ public class ActivityMain extends TabActivity {
         // Tab for HotSpot
         TabHost.TabSpec hotSpotSpec = tabHost.newTabSpec("activityhotspottablayout");
         hotSpotSpec.setIndicator("", getResources().getDrawable(R.drawable.tab_activity_hotspot));
-        Intent hotSpotContent = new Intent(this, TabActivityHotSpotLayout.class);
+        Intent hotSpotContent = new Intent(this, TabActivityHotSpot.class);
         hotSpotSpec.setContent(hotSpotContent);
 
         // Tab for Notification

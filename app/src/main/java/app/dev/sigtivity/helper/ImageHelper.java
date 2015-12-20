@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
  * Created by Ravi on 10/17/2015.
  */
 public class ImageHelper {
-    public static Bitmap DecodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight){
+    public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);

@@ -18,7 +18,7 @@ public class FragmentPhotoCaption extends DialogFragment {
     private EditText caption;
     private Button btnSaveCaption;
     private ImageView takenImage;
-    private OnFragmentInteractionListener mListener;
+    private OnPhotoCaptionFragmentInteractionListener mListener;
 
     public static FragmentPhotoCaption newInstance(Bitmap takenPhoto) {
         photo = takenPhoto;
@@ -54,7 +54,7 @@ public class FragmentPhotoCaption extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnPhotoCaptionFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -68,8 +68,8 @@ public class FragmentPhotoCaption extends DialogFragment {
     }
 
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String caption);
+    public interface OnPhotoCaptionFragmentInteractionListener {
+        void onPhotoCaptionFragmentInteraction(String caption);
     }
 
     private void setEditCaptionTextFocus(boolean editCaptionTextFocus) {
@@ -94,7 +94,7 @@ public class FragmentPhotoCaption extends DialogFragment {
             public void onClick(View v) {
                 if (mListener != null) {
                     String txtCaption = caption.getText().toString();
-                    mListener.onFragmentInteraction(txtCaption);
+                    mListener.onPhotoCaptionFragmentInteraction(txtCaption);
                     dismiss();
                 }
             }

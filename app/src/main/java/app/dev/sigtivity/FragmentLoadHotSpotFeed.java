@@ -2,39 +2,29 @@ package app.dev.sigtivity;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -47,6 +37,7 @@ import java.util.List;
 
 import app.dev.sigtivity.adapter.SigRecyclerViewAdapter;
 import app.dev.sigtivity.adapter.UserPictureListAdapter;
+import app.dev.sigtivity.core.GlobalConstants;
 import app.dev.sigtivity.core.PreferenceManager;
 import app.dev.sigtivity.domain.EventDetail;
 import app.dev.sigtivity.domain.Photo;
@@ -54,39 +45,27 @@ import app.dev.sigtivity.http.HttpManager;
 import app.dev.sigtivity.http.RequestPackage;
 import app.dev.sigtivity.parser.JSONParser;
 
+/**
+ * Created by Ravi on 12/16/2015.
+ */
 
-public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoCaption.OnFragmentInteractionListener{
+public class FragmentLoadHotSpotFeed extends Fragment {
+//    @Override
+//    public void onFragmentInteraction(String caption) {
+//        saveTakenPhoto(caption);
+//    }
 
-    private enum CurrentView{
+    public enum CurrentView{
         ListView,
         GridView
     }
 
-    private FrameLayout frameLayout;
-    private Location location;
-    private SIGLocationListener sigLocationListner;
-    private LocationManager sigLocationManager;
-    private TextView txtEventSearchStatus;
-    private String provider;
-    private Criteria criteria;
-
-    private TextView txtEventTitle;
-    private TextView txtEventLocationName;
-    private TextView txtParticipantsCount;
-    private TextView txtTotalPhotosCount;
-    private EditText txtEventCode;
-    private Button btnJoinEvent;
-
-    private View initialLayout;
-    private View eventCodeLayout;
-    private View hotSpotLayout;
-    private String latitude;
-    private String longitude;
-
-    // Hotspot feedback variables
-    private SharedPreferences sharedPreferences;
+    private OnHotSpotFragmentInteractionListener mListener;
+    private TabActivityHotSpot context;
     private String userId;
-    private ListView hotSpotListView;
+    private int eventId;
+    private EventDetail eventDetail;
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int MEDIA_TYPE_IMAGE = 1;
     private GridView hotSpotGridView;
@@ -95,63 +74,64 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
     private CurrentView currentView;
     private CurrentView clickedView;
     private Uri fileUri;
-    private int eventId;
-    private String eventCode;
-    private EventDetail eventDetail;
     private Button cameraButton;
     private List<Photo> eventPhotos;
     private Bitmap scaledBitmap;
-    private String eventTitle;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
-    // Hotspot feedback ends
 
-    @Override
-    public void onFragmentInteraction(String caption) {
-        saveTakenPhoto(caption);
+    // Must have empty constructor
+    public FragmentLoadHotSpotFeed(){}
+
+    public void setCurrentActivityAndEvent(TabActivityHotSpot context, EventDetail eventDetail){
+        this.context = context;
+        this.eventDetail = eventDetail;
+    }
+
+    public void updateTakenPhoto(String photoCaption, Bitmap scaledBitmap){
+        this.scaledBitmap = scaledBitmap;
+        saveTakenPhoto(photoCaption);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hot_spot_layout);
-        //Load initial framelout
-        frameLayout = (FrameLayout) findViewById(R.id.hotspotFrameLayout);
-        initialLayout = LayoutInflater.from(getApplicationContext()).inflate(R.layout.framelayout_hotspot_intitalizer, frameLayout, true);
-        intialize();
-
-        // set location
-        initializeLocationService();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_tab_activity_hot_spot_layout, menu);
-        return true;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.activity_hot_spot, container, false);
+        initializeHotSpotFeed(view);
+//        initializeEventCodeLayout(view);
+//        new EventFinder().execute();
+        return view;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnHotSpotFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
-            if(resultCode == RESULT_OK){
+            if(resultCode == context.RESULT_OK){
                 scaledBitmap = decodeSampledBitmapFromFile(fileUri.getPath(), 600, 600);
                 try {
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -165,118 +145,32 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
         }
     }
 
-    private void saveTakenPhoto(String caption) {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Sigtivity");
-        File scaledFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + java.util.UUID.randomUUID()  + ".jpg");
-        try {
-            FileOutputStream stream = new FileOutputStream(scaledFile.getAbsolutePath());
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
-            try {
-                stream.flush();
-                stream.close();
-                //delete the original to save space
-                File original = new File(fileUri.getPath());
-                original.delete();
-
-                RequestPackage requestPackage = new RequestPackage();
-                requestPackage.setParam("auth_token", "0");
-                requestPackage.setParam("event_id", String.valueOf(eventId));
-                requestPackage.setParam("user_id", userId);
-                requestPackage.setParam("photo_caption", caption);
-                requestPackage.setParam("image_file_path", scaledFile.getAbsolutePath());
-                new UploadPicture().execute(requestPackage);
-
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnHotSpotFragmentInteractionListener {
+        public void onHotSpotFragmentInteraction();
     }
 
-    // Internal methods
-    private void intialize(){
-        txtEventSearchStatus = (TextView) initialLayout.findViewById(R.id.txtEventSearchStatus);
-    }
-
-    private void initializeLocationService(){
-        sigLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-
-        provider = sigLocationManager.getBestProvider(criteria, false);
-        Location location = sigLocationManager.getLastKnownLocation(provider);
-        sigLocationListner = new SIGLocationListener();
-        if(location != null){
-            sigLocationListner.onLocationChanged(location);
-            new EventFinder().execute();
-        }else{
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
-
-        sigLocationManager.requestLocationUpdates(provider, 200, 1, sigLocationListner);
-    }
-
-    private void loadEventDetail(){
-        if(eventDetail != null) {
-            frameLayout.removeAllViews();
-            eventCodeLayout = LayoutInflater.from(getApplicationContext()).inflate(R.layout.framelayout_hotspot_eventcode, frameLayout, true);
-            initializeEventCodeLayout();
-            bindEventDetail();
-        }else{
-            txtEventSearchStatus.setText("Nothing happening yet..");
-        }
-    }
-
-    private void initializeEventCodeLayout(){
-        txtEventTitle = (TextView) eventCodeLayout.findViewById(R.id.txtEventTitle);
-        txtEventLocationName = (TextView) eventCodeLayout.findViewById(R.id.txtEventLocationName);
-        txtEventCode = (EditText) eventCodeLayout.findViewById(R.id.txtEventCode);
-        txtParticipantsCount = (TextView) eventCodeLayout.findViewById(R.id.txtParticipantsCount);
-        txtTotalPhotosCount = (TextView) eventCodeLayout.findViewById(R.id.txtTotalPhotosCount);
-        btnJoinEvent = (Button) eventCodeLayout.findViewById(R.id.btnJoinEvent);
-
-        btnJoinEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideKeyboard(v);
-                validateEventCode();
-            }
-        });
-    }
-
-    private void bindEventDetail(){
-        txtEventTitle.setText(eventDetail.getEventName());
-        txtEventLocationName.setText(eventDetail.getLocationName());
-        txtTotalPhotosCount.setText(String.format("%s photo(s)", String.valueOf(eventDetail.getTotalPhotos())));
-        txtParticipantsCount.setText(String.format("%s joined", String.valueOf(eventDetail.getParticipants())));
+    private void initializeHotSpotFeed(View view){
+        ActivityMain parent = (ActivityMain)context.getParent();
+        parent.showActionBar(eventDetail.getEventName());
+        userId = PreferenceManager.getUserId(context);
         eventId = eventDetail.getEventId();
-        eventCode = eventDetail.getEventCode();
-        eventTitle = eventDetail.getEventName();
-    }
-
-    private void validateEventCode(){
-        if(txtEventCode.getText().toString().equals(eventCode)){
-            frameLayout.removeAllViews();
-            hotSpotLayout = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_hot_spot, frameLayout, true);
-            initializeHotSpotFeed();
-        }else{
-            txtEventCode.setError("Invalid event code entered!");
-        }
-    }
-
-    private void initializeHotSpotFeed(){
-        ActivityMain parent = (ActivityMain)getParent();
-        parent.showActionBar(eventTitle);
-        userId = PreferenceManager.getUserId(this);
         //hotSpotListView = (ListView)hotSpotLayout.findViewById(R.id.hotSpotList);
-        hotSpotGridView = (GridView)hotSpotLayout.findViewById(R.id.gridViewHotSpot);
-        imgBtnGridView = (ImageButton)hotSpotLayout.findViewById(R.id.imgBtnHotSpotGridView);
-        imgBtnListView = (ImageButton)hotSpotLayout.findViewById(R.id.imgBtnHotSpotListView);
-        cameraButton = (Button)hotSpotLayout.findViewById(R.id.buttonCamera);
-        mRecyclerView = (RecyclerView)hotSpotLayout.findViewById(R.id.sig_recycler_view);
-        mLayoutManager = new LinearLayoutManager(this);
+        hotSpotGridView = (GridView)view.findViewById(R.id.gridViewHotSpot);
+        imgBtnGridView = (ImageButton)view.findViewById(R.id.imgBtnHotSpotGridView);
+        imgBtnListView = (ImageButton)view.findViewById(R.id.imgBtnHotSpotListView);
+        cameraButton = (Button)view.findViewById(R.id.buttonCamera);
+        mRecyclerView = (RecyclerView)view.findViewById(R.id.sig_recycler_view);
+        mLayoutManager = new LinearLayoutManager(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
@@ -285,8 +179,9 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                context.setFileUri(fileUri);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                getActivity().startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -326,13 +221,19 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
         if(currentView == CurrentView.ListView) {
             hotSpotGridView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-            mAdapter = new SigRecyclerViewAdapter(eventPhotos, this);
+            mAdapter = new SigRecyclerViewAdapter(eventPhotos, context);
             ((SigRecyclerViewAdapter)mAdapter).setOnItemClickListner(new SigRecyclerViewAdapter.SigClickListener(){
                 @Override
                 public void onItemClick(int position, View v, int elementId) {
                     if(R.id.hotSpotImg == v.getId()){
                         Intent i = new Intent().setClass(v.getContext(), ActivityImageDetail.class);
-                        i.putExtra("picture_id", elementId);
+                        i.putExtra(GlobalConstants.KEY_PICTURE_ID, elementId);
+                        i.setAction(Intent.ACTION_MAIN);
+                        i.addCategory(Intent.CATEGORY_LAUNCHER);
+                        startActivity(i);
+                    }else{
+                        Intent i = new Intent().setClass(v.getContext(), TabActivityProfile.class);
+                        i.putExtra(GlobalConstants.KEY_PROFILE_ID, elementId);
                         i.setAction(Intent.ACTION_MAIN);
                         i.addCategory(Intent.CATEGORY_LAUNCHER);
                         startActivity(i);
@@ -347,7 +248,7 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
             hotSpotGridView.setVisibility(View.VISIBLE);
             //hotSpotListView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.GONE);
-            UserPictureListAdapter adapter = new UserPictureListAdapter(getApplicationContext(), eventPhotos);
+            UserPictureListAdapter adapter = new UserPictureListAdapter(context.getApplicationContext(), eventPhotos);
             hotSpotGridView.setAdapter(adapter);
             hotSpotGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -468,17 +369,46 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
         return rotate;
     }
 
-    private void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private void saveTakenPhoto(String caption) {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Sigtivity");
+        File scaledFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + java.util.UUID.randomUUID()  + ".jpg");
+        try {
+            FileOutputStream stream = new FileOutputStream(scaledFile.getAbsolutePath());
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+            try {
+                stream.flush();
+                stream.close();
+                //delete the original to save space
+                File original = new File(fileUri.getPath());
+                original.delete();
+
+                RequestPackage requestPackage = new RequestPackage();
+                requestPackage.setParam("auth_token", "0");
+                requestPackage.setParam("event_id", String.valueOf(eventId));
+                requestPackage.setParam("user_id", userId);
+                requestPackage.setParam("photo_caption", caption);
+                requestPackage.setParam("image_file_path", scaledFile.getAbsolutePath());
+                new UploadPicture().execute(requestPackage);
+
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
+//    private void hideKeyboard(View view) {
+//        InputMethodManager inputMethodManager =(InputMethodManager)view.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//    }
+
     // internal classes
-    private class AddUserToEvent extends AsyncTask<String, String, String>{
+    private class AddUserToEvent extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            return HttpManager.getEventDetail(String.valueOf(userId), String.valueOf(eventId), "0", eventCode);
+            return HttpManager.getEventDetail(String.valueOf(userId), String.valueOf(eventDetail.getEventId()), "0", eventDetail.getEventCode());
         }
 
         @Override
@@ -510,41 +440,6 @@ public class TabActivityHotSpotLayout extends Activity implements FragmentPhotoC
 
         protected void onPostExecute(String content){
             refreshAndDisplayEventPhotos();
-        }
-    }
-
-    //Internal class
-    private class SIGLocationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            // Initialize the location fields
-            latitude = String.valueOf(location.getLatitude());
-            longitude = String.valueOf(location.getLongitude());
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-    }
-
-    private class EventFinder extends AsyncTask<String, String, String>{
-        @Override
-        protected String doInBackground(String... params) {
-            return HttpManager.getEventDetailByCordiates(latitude, longitude);
-        }
-
-        @Override
-        protected void onPostExecute(String jsonString) {
-            eventDetail = JSONParser.parseEventDetail(jsonString);
-            loadEventDetail();
         }
     }
 }

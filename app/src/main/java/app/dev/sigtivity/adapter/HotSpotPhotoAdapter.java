@@ -9,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -23,8 +20,6 @@ import java.util.List;
 import app.dev.sigtivity.ActivityMain;
 import app.dev.sigtivity.CircularImage;
 import app.dev.sigtivity.R;
-import app.dev.sigtivity.TabActivityHotSpotLayout;
-import app.dev.sigtivity.TabActivityProfile;
 import app.dev.sigtivity.domain.Photo;
 import app.dev.sigtivity.helper.DateHelper;
 import app.dev.sigtivity.http.HttpManager;

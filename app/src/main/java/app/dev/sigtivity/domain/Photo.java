@@ -11,6 +11,7 @@ import app.dev.sigtivity.CircularImage;
  */
 public class Photo {
     private int pictureId;
+    private int pictureProfileId;
     private String imageUrl;
     private String userName;
     private String photoName;
@@ -118,5 +119,13 @@ public class Photo {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public int getPictureProfileId() {
+        return pictureProfileId;
+    }
+
+    public void setPictureProfileId(int profileId) {
+        this.pictureProfileId = profileId;
     }
 }

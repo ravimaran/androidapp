@@ -6,61 +6,41 @@
     android:minHeight="25px"
     android:background="#ffffff"
     android:fitsSystemWindows="true">
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linearLayoutProfile"
         android:layout_width="fill_parent"
         android:background="#f7f7f7"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_width="100sp"
-            android:layout_height="100sp"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
             android:padding="3dp"
             android:src="@drawable/ic_default_profile"
             android:layout_marginLeft="5sp"
-            android:layout_weight="0"
+            android:layout_centerVertical="true"
             android:id="@+id/imgViewProfile" />
-        <LinearLayout
-            android:layout_width="fill_parent"
+        <TextView
+            android:id="@+id/txtViewProfileName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
-            android:layout_marginTop="10sp"
-            android:layout_weight="1">
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="fill_parent">
-                <TextView
-                    android:id="@+id/txtViewProfileName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    style="@style/default_text_color"
-                    android:fontFamily="sans-serif-black"
-                    android:singleLine="true"
-                    android:maxLength="30"
-                    android:text="Thenusha Parani"
-                    android:layout_marginTop="10dp"
-                    android:background="@android:color/transparent"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:hint="Short bio. Tap to edit..."
-                    android:fontFamily="sans-serif-light"
-                    android:maxLines="2"
-                    android:maxLength="60"
-                    android:lines="2"
-                    android:id="@+id/textViewProfileTitle"
-                    android:layout_below="@id/txtViewProfileName"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5sp"
-                    android:background="@android:color/transparent"
-                    style="@style/default_text_color"/>
-            </RelativeLayout>
-        </LinearLayout>
-    </LinearLayout>
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-black"
+            android:text="Thenusha Parani"
+            android:layout_marginLeft="15sp"
+            android:layout_toRightOf="@id/imgViewProfile"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:hint="Short bio. Tap to edit..."
+            android:fontFamily="sans-serif-light"
+            android:id="@+id/textViewProfileTitle"
+            android:layout_toRightOf="@id/imgViewProfile"
+            android:layout_below="@id/txtViewProfileName"
+            android:layout_marginLeft="15sp"/>
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -111,6 +91,7 @@
                         android:id="@+id/btnNetworkCount"
                         style="@style/profile_text"
                         android:singleLine="false"
+                        android:visibility="gone"
                         android:background="@android:color/transparent"
                         android:gravity="center"
                         android:onClick="displayNetworks"/>
@@ -129,5 +110,4 @@
                 android:layout_gravity="center" />
         </FrameLayout>
     </LinearLayout>
-
 </LinearLayout>

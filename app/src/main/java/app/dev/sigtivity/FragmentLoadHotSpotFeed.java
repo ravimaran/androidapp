@@ -50,10 +50,10 @@ import app.dev.sigtivity.parser.JSONParser;
  */
 
 public class FragmentLoadHotSpotFeed extends Fragment {
-//    @Override
-//    public void onFragmentInteraction(String caption) {
-//        saveTakenPhoto(caption);
-//    }
+
+    public interface OnHotSpotFragmentInteractionListener {
+        public void onHotSpotFragmentInteraction();
+    }
 
     public enum CurrentView{
         ListView,
@@ -85,9 +85,10 @@ public class FragmentLoadHotSpotFeed extends Fragment {
     // Must have empty constructor
     public FragmentLoadHotSpotFeed(){}
 
-    public void setCurrentActivityAndEvent(TabActivityHotSpot context, EventDetail eventDetail){
+    public void setCurrentActivityAndEvent(TabActivityHotSpot context, EventDetail eventDetail, String userId){
         this.context = context;
         this.eventDetail = eventDetail;
+        this.userId = userId;
     }
 
     public void updateTakenPhoto(String photoCaption, Bitmap scaledBitmap){
@@ -106,8 +107,6 @@ public class FragmentLoadHotSpotFeed extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.activity_hot_spot, container, false);
         initializeHotSpotFeed(view);
-//        initializeEventCodeLayout(view);
-//        new EventFinder().execute();
         return view;
     }
 
@@ -128,43 +127,12 @@ public class FragmentLoadHotSpotFeed extends Fragment {
         mListener = null;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
-            if(resultCode == context.RESULT_OK){
-                scaledBitmap = decodeSampledBitmapFromFile(fileUri.getPath(), 600, 600);
-                try {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    DialogFragment photoCaption = FragmentPhotoCaption.newInstance(scaledBitmap);
-                    ft.add(photoCaption, null);
-                    ft.commitAllowingStateLoss();
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnHotSpotFragmentInteractionListener {
-        public void onHotSpotFragmentInteraction();
-    }
-
     private void initializeHotSpotFeed(View view){
-        ActivityMain parent = (ActivityMain)context.getParent();
-        parent.showActionBar(eventDetail.getEventName());
-        userId = PreferenceManager.getUserId(context);
-        eventId = eventDetail.getEventId();
-        //hotSpotListView = (ListView)hotSpotLayout.findViewById(R.id.hotSpotList);
+        if(ActivityMain.getInstance() != null && eventDetail != null) {
+            ActivityMain.getInstance().buildActionBar(eventDetail.getEventName().toUpperCase(), GlobalConstants.FRAG_LOAD_EVENT);
+            eventId = eventDetail.getEventId();
+        }
+
         hotSpotGridView = (GridView)view.findViewById(R.id.gridViewHotSpot);
         imgBtnGridView = (ImageButton)view.findViewById(R.id.imgBtnHotSpotGridView);
         imgBtnListView = (ImageButton)view.findViewById(R.id.imgBtnHotSpotListView);
@@ -234,6 +202,7 @@ public class FragmentLoadHotSpotFeed extends Fragment {
                     }else{
                         Intent i = new Intent().setClass(v.getContext(), TabActivityProfile.class);
                         i.putExtra(GlobalConstants.KEY_PROFILE_ID, elementId);
+                        i.putExtra(GlobalConstants.KEY_READ_ONLY, true);
                         i.setAction(Intent.ACTION_MAIN);
                         i.addCategory(Intent.CATEGORY_LAUNCHER);
                         startActivity(i);
@@ -246,18 +215,15 @@ public class FragmentLoadHotSpotFeed extends Fragment {
 
         if(currentView == CurrentView.GridView){
             hotSpotGridView.setVisibility(View.VISIBLE);
-            //hotSpotListView.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.GONE);
-            UserPictureListAdapter adapter = new UserPictureListAdapter(context.getApplicationContext(), eventPhotos);
+            UserPictureListAdapter adapter = new UserPictureListAdapter(context, eventPhotos);
             hotSpotGridView.setAdapter(adapter);
             hotSpotGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     int pictureId = view.getId();
-                    TextView textView = (TextView) view.findViewById(R.id.imageUrl);
                     Intent i = new Intent().setClass(view.getContext(), ActivityImageDetail.class);
-                    i.putExtra("picture_id", pictureId);
-                    i.putExtra("picture_url", textView.getText());
+                    i.putExtra(GlobalConstants.KEY_PICTURE_ID, pictureId);
                     i.setAction(Intent.ACTION_MAIN);
                     i.addCategory(Intent.CATEGORY_LAUNCHER);
                     startActivity(i);
@@ -293,82 +259,6 @@ public class FragmentLoadHotSpotFeed extends Fragment {
         return mediaFile;
     }
 
-    private Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight){
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-
-        int height = options.outHeight;
-        int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight)
-        {
-            inSampleSize = (int)(Math.round((float) height / (float) reqHeight));
-        }
-        int expectedWidth = width / inSampleSize;
-
-        if (expectedWidth > reqWidth)
-        {
-            inSampleSize = (int)(Math.round((float) width / (float) reqWidth));
-        }
-
-        options.inSampleSize = inSampleSize;
-        options.inJustDecodeBounds = false;
-        Bitmap scaled = BitmapFactory.decodeFile(path, options);
-
-        double newHeight = options.outHeight;
-        double newWidth = options.outHeight;
-        double ratio;
-        if (options.outWidth > options.outHeight)
-        {
-            newHeight = reqHeight;
-            ratio = (double)reqHeight / (double)options.outHeight;
-            newWidth = options.outWidth * ratio;
-        }
-        else
-        {
-            newWidth = reqWidth;
-            ratio = (double)reqWidth / (double)options.outWidth;
-            newWidth = options.outHeight * ratio;
-        }
-
-        Matrix matrix = new Matrix();
-        try {
-            ExifInterface oldexif = new ExifInterface(path);
-            int rotation = getRotation(oldexif);
-            if (rotation != 0f) {
-                matrix.preRotate(rotation);
-            }
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-        Bitmap rescaled = Bitmap.createScaledBitmap(scaled, (int) newWidth, (int) newHeight, true);
-        int x = rescaled.getWidth() / 2 - reqWidth / 2;
-        int y = rescaled.getHeight() / 2 - reqHeight / 2;
-        return Bitmap.createBitmap(rescaled, x, y, reqWidth, reqHeight, matrix, true);
-    }
-
-    private int getRotation(ExifInterface exif)
-    {
-        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
-        int rotate = 0;
-        switch (orientation) {
-            case 3:
-                rotate = 180;
-                break;
-            case 6:
-                rotate = 90;
-                break;
-            case 8:
-                rotate = 270;
-                break;
-        }
-
-        return rotate;
-    }
-
     private void saveTakenPhoto(String caption) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Sigtivity");
         File scaledFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + java.util.UUID.randomUUID()  + ".jpg");
@@ -398,17 +288,12 @@ public class FragmentLoadHotSpotFeed extends Fragment {
         }
     }
 
-//    private void hideKeyboard(View view) {
-//        InputMethodManager inputMethodManager =(InputMethodManager)view.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
-//        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//    }
-
     // internal classes
     private class AddUserToEvent extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
-            return HttpManager.getEventDetail(String.valueOf(userId), String.valueOf(eventDetail.getEventId()), "0", eventDetail.getEventCode());
+            return HttpManager.getEventDetail(userId, String.valueOf(eventDetail.getEventId()), "0", eventDetail.getEventCode());
         }
 
         @Override

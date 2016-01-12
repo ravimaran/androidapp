@@ -64,6 +64,7 @@ public class TabActivityProfile extends Activity {
     List<Photo> userPhotos;
     private User user;
     private int profileId;
+    private boolean readOnly = false;
 
     private TextView editTextProfileTitle;
     private TextView editTextProfileName;
@@ -93,6 +94,13 @@ public class TabActivityProfile extends Activity {
         loadUserInfo();
         // load user pics frame layout as default
         loadFrameLayout();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserInfo();
+        new UserPicsLoader().execute(String.valueOf(profileId));
     }
 
     private void initialize(){
@@ -157,6 +165,7 @@ public class TabActivityProfile extends Activity {
         int userId = Integer.parseInt(PreferenceManager.getUserId(this));
         profileId = getIntent().getIntExtra(GlobalConstants.KEY_PROFILE_ID, userId);
         if(getIntent().hasExtra(GlobalConstants.KEY_PROFILE_ID)){
+            readOnly = getIntent().getBooleanExtra(GlobalConstants.KEY_READ_ONLY, false);
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -224,16 +233,27 @@ public class TabActivityProfile extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_profile, menu);
+        if(!readOnly) {
+            getMenuInflater().inflate(R.menu.menu_activity_profile, menu);
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent i = new Intent().setClass(this, ActivitySettings.class);
-        i.setAction(Intent.ACTION_MAIN);
-        i.addCategory(Intent.CATEGORY_LAUNCHER);
-        startActivity(i);
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+        }
+        else {
+            Intent i = new Intent().setClass(this, ActivitySettings.class);
+            i.setAction(Intent.ACTION_MAIN);
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            startActivity(i);
+        }
+
         return false;
     }
 

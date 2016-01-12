@@ -9,4 +9,8 @@ public class GlobalConstants {
     public static final String KEY_LOGIN = "_LOGIN_";
     public static final String KEY_PROFILE_ID = "_PROFILE_ID_";
     public static final String KEY_PICTURE_ID = "_PICTURE_ID_";
+    public static final String KEY_READ_ONLY = "_READ_ONLY_";
+    public static final String FRAG_SEARCH_EVENT = "SEARCH_EVENT";
+    public static final String FRAG_EVENT_CODE = "EVENT_CODE";
+    public static final String FRAG_LOAD_EVENT = "LOAD_EVENT";
 }

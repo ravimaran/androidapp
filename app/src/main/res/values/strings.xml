@@ -20,7 +20,7 @@
     <string name="title_activity_activity_hot_spot">ActivityHotSpot</string>
     <string name="title_activity_activity_feed">ActivityFeed</string>
     <string name="title_activity_activity_search">ActivitySearch</string>
-    <string name="title_activity_tab_activity_notification">TabActivityNotification</string>
+    <string name="title_activity_tab_activity_notification">NOTIFICATIONS</string>
     <string name="title_activity_activity_home">ActivityHome</string>
     <string name="title_activity_activity_main"></string>
 
@@ -36,4 +36,7 @@
     <string name="title_activity_activity_photo_caption">ActivityPhotoCaption</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_activity_edit_profile">EDIT PROFILE</string>
+    <string name="no_hot_spot_found">There is no event has been organized at this location.</string>
+    <string name="ok">OK</string>
+    <string name="out_of_hot_spot">You have moved away from the event location. You cannot take any pictures but can watch all the pictures are taken by others from the event.</string>
 </resources>

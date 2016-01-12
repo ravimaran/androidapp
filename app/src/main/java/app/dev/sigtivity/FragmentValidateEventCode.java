@@ -22,13 +22,16 @@ import app.dev.sigtivity.parser.JSONParser;
  */
 public class FragmentValidateEventCode extends Fragment {
 
+    // Listener interface to be implemented
+    public interface OnEventCodeFragmentInteractionListener {
+        public void onEventCodeFragmentInteraction(EventDetail eventDetail);
+    }
+
     private OnEventCodeFragmentInteractionListener mListener;
 
     private String latitude;
     private String longitude;
     private String eventCode;
-
-    private int eventId;
 
     private TextView txtEventTitle;
     private TextView txtEventLocationName;
@@ -81,21 +84,6 @@ public class FragmentValidateEventCode extends Fragment {
         mListener = null;
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnEventCodeFragmentInteractionListener {
-        public void onEventCodeFragmentInteraction(EventDetail eventDetail);
-    }
-
     private void initializeEventCodeLayout(View view){
         txtEventTitle = (TextView) view.findViewById(R.id.txtEventTitle);
         txtEventLocationName = (TextView) view.findViewById(R.id.txtEventLocationName);
@@ -118,7 +106,6 @@ public class FragmentValidateEventCode extends Fragment {
         txtEventLocationName.setText(eventDetail.getLocationName());
         txtTotalPhotosCount.setText(String.format("%s photo(s)", String.valueOf(eventDetail.getTotalPhotos())));
         txtParticipantsCount.setText(String.format("%s joined", String.valueOf(eventDetail.getParticipants())));
-        eventId = eventDetail.getEventId();
         eventCode = eventDetail.getEventCode();
     }
 
@@ -144,7 +131,7 @@ public class FragmentValidateEventCode extends Fragment {
     private class EventFinder extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
-            return HttpManager.getEventDetailByCordiates(latitude, longitude);
+            return HttpManager.getEventDetailByCordiates(String.valueOf(latitude), String.valueOf(longitude));
         }
 
         @Override

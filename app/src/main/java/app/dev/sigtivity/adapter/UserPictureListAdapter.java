@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.dev.sigtivity.R;
+import app.dev.sigtivity.SquareImageView;
 import app.dev.sigtivity.domain.Photo;
 
 /**
@@ -59,8 +60,8 @@ public class UserPictureListAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.template_profile_pic_row, parent, false);
         Photo photo = userPhotos.get(position);
         view.setId(photo.getPictureId());
-        ImageView imageView = (ImageView) view.findViewById(R.id.takenImg);
-        Picasso.with(context).load(photo.getThumbnail()).into(imageView);
+        SquareImageView imageView = (SquareImageView) view.findViewById(R.id.takenImg);
+        Picasso.with(context).load(photo.getThumbnail()).error(R.drawable.p1).into(imageView);
         return view;
     }
 }

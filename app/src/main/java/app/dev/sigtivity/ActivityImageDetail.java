@@ -31,6 +31,7 @@ import java.util.List;
 
 import app.dev.sigtivity.adapter.PhotoCommentAdapter;
 import app.dev.sigtivity.core.CircleTransform;
+import app.dev.sigtivity.core.GlobalConstants;
 import app.dev.sigtivity.core.PreferenceManager;
 import app.dev.sigtivity.domain.Comment;
 import app.dev.sigtivity.domain.ImageDetail;
@@ -90,7 +91,7 @@ public class ActivityImageDetail extends Activity {
         progressBar = (ProgressBar)findViewById(R.id.progressBarImageDetail);
 
         Bundle bundle = getIntent().getExtras();
-        pictureId = bundle.getInt("picture_id");
+        pictureId = bundle.getInt(GlobalConstants.KEY_PICTURE_ID);
 
         initializeEvents();
     }

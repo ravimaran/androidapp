@@ -38,7 +38,6 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
 
     private List<Photo> mDataset;
     private static SigClickListener sigClickListener;
-    private ImageLoader imageLoader;
     private Context context;
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -53,6 +52,7 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
         ProgressBar progressBar;
 
         int pictureId;
+        int profileId;
 
         public DataObjectHolder(final View itemView){
             super(itemView);
@@ -75,7 +75,7 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
             profileImgView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sigClickListener.onItemClick(getPosition(), profileImgView, pictureId);
+                    sigClickListener.onItemClick(getPosition(), profileImgView, profileId);
                 }
             });
 
@@ -109,8 +109,7 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
     public void onBindViewHolder(final DataObjectHolder holder, int position) {
         Photo photo = mDataset.get(position);
         holder.pictureId = photo.getPictureId();
-//        imageLoader = CustomVolleyRequest.getInstance(context).getImageLoader();
-//        imageLoader.get(photo.getImageUrl(), ImageLoader.getImageListener(holder.imgView, R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
+        holder.profileId = photo.getPictureProfileId();
         Picasso.with(context).load(photo.getImageUrl()).placeholder(R.drawable.whiteboard).into(holder.imgView, new Callback() {
             @Override
             public void onSuccess() {
@@ -124,7 +123,6 @@ public class SigRecyclerViewAdapter extends RecyclerView.Adapter<SigRecyclerView
             }
         });
 
-        //holder.imgView.setImageUrl(photo.getImageUrl(), imageLoader);
         Picasso.with(context).load(photo.getProfileImgUrl()).transform(new CircleTransform()).into(holder.profileImgView);
         holder.caption.setText(photo.getPhotoCaption());
         holder.userNameTextView.setText(photo.getUserName());

@@ -40,6 +40,10 @@ public class JSONParser {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 Photo pic = new Photo();
                 pic.setPictureId(obj.getInt("photo_id"));
+                if(obj.has("user_id")){
+                    pic.setPictureProfileId(obj.getInt("user_id"));
+                }
+
                 pic.setUserName(obj.getString("name"));
                 pic.setImageUrl(obj.getString("fullsize"));
                 pic.setPhotoCaption(obj.getString("photo_caption"));

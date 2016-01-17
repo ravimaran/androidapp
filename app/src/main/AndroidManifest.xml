@@ -39,7 +39,7 @@
         <activity
             android:name=".TabActivityProfile"
             android:label="@string/title_activity_activity_profile"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".TabActivityHotSpot_Remove"
@@ -68,12 +68,12 @@
         <activity
             android:name=".ActivityImageDetail"
             android:label="@string/title_activity_activity_image_detail"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
             android:name=".ActivitySettings"
             android:label="@string/title_activity_activity_settings"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".TabActivityHotSpot"
@@ -87,6 +87,10 @@
         <activity
             android:name=".ActivityEditProfile"
             android:label="@string/title_activity_activity_edit_profile" >
+        </activity>
+        <activity
+            android:name=".ActivityUserEvents"
+            android:label="@string/title_activity_activity_user_events" >
         </activity>
     </application>
 

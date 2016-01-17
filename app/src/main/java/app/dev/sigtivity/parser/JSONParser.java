@@ -204,7 +204,7 @@ public class JSONParser {
             JSONObject obj = jsonArray.getJSONObject(0);
             detail.setEventLocationName(obj.getString("location_name"));
             detail.setProfileImgUrl(obj.getString("profileimage"));
-            detail.setPhotoAddedDate( obj.getString("date_added"));
+            detail.setPhotoAddedDate(obj.getString("date_added"));
             detail.setImageUrl(obj.getString("fullsize"));
             detail.setPhtoCaption(obj.getString("photo_caption"));
             detail.setProfileName(obj.getString("name"));
@@ -232,6 +232,27 @@ public class JSONParser {
         }
 
         return lookup;
+    }
+
+    public static List<EventDetail> getUserEvents(String jsonString){
+        List<EventDetail> userEvents = new ArrayList<>();
+        try{
+            JSONArray jsonArray = new JSONArray(jsonString);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                EventDetail detail =new EventDetail();
+                detail.setEventId(obj.getInt("event_id"));
+                detail.setEventName(obj.getString("event_name"));
+                String event_date = obj.getString("event_date");
+                detail.setEventDate(CommonHelper.parseDate(event_date));
+                userEvents.add(detail);
+            }
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return userEvents;
     }
 
 }

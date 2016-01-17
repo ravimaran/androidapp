@@ -91,6 +91,18 @@ public class HttpManager {
         return getData(requestPackage);
     }
 
+    public static String getUserEvents(int userId, int eventId){
+        RequestPackage requestPackage = new RequestPackage();
+        requestPackage.setUri(String.format("http://giftandevent.com/event/myevents/%s/0/%s", String.valueOf(userId), String.valueOf(eventId)));
+        return getData(requestPackage);
+    }
+
+    public static String getEventDetail(int eventId){
+        RequestPackage requestPackage = new RequestPackage();
+        requestPackage.setUri(String.format("http://giftandevent.com/event/getevent/%s", String.valueOf(eventId)));
+        return getData(requestPackage);
+    }
+
     public static void uploadFile(RequestPackage requestPackage) {
         String fileName = requestPackage.getParam("image_file_path");
         HttpURLConnection conn = null;

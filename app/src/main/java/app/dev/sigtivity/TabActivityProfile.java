@@ -27,6 +27,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,11 +44,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.MissingResourceException;
 
+import app.dev.sigtivity.adapter.UserEventListAdapter;
 import app.dev.sigtivity.adapter.UserPictureListAdapter;
 import app.dev.sigtivity.core.CircleTransform;
 import app.dev.sigtivity.core.GlobalConstants;
 import app.dev.sigtivity.core.ImageManager;
 import app.dev.sigtivity.core.PreferenceManager;
+import app.dev.sigtivity.domain.EventDetail;
 import app.dev.sigtivity.domain.Photo;
 import app.dev.sigtivity.domain.User;
 import app.dev.sigtivity.helper.CustomVolleyRequest;
@@ -61,6 +64,7 @@ import app.dev.sigtivity.utils.ConnectionManager;
 
 public class TabActivityProfile extends Activity {
     GridView userPicturesGrid;
+    ListView userEventsList;
     List<Photo> userPhotos;
     private User user;
     private int profileId;
@@ -132,10 +136,13 @@ public class TabActivityProfile extends Activity {
                 case 2:
                     setSelectedStat(btnEventCount);
                     LayoutInflater.from(getApplicationContext()).inflate(R.layout.framelayout_profile_events, profileFrameLayout, true);
+                    userEventsList = (ListView)profileFrameLayout.findViewById(R.id.listUserEvents);
+                    new LoadUserEvents().execute();
                     break;
                 case 3:
                     setSelectedStat(btnNetworkCount);
                     LayoutInflater.from(getApplicationContext()).inflate(R.layout.framelayout_profile_networks, profileFrameLayout, true);
+
                     break;
                 case 1:
                 default:
@@ -186,6 +193,22 @@ public class TabActivityProfile extends Activity {
         });
     }
 
+    public void displayUserEventsList(List<EventDetail> userEvents){
+        UserEventListAdapter adapter = new UserEventListAdapter(this, userEvents);
+        userEventsList.setAdapter(adapter);
+        userEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int eventId = view.getId();
+                Intent i = new Intent().setClass(view.getContext(), ActivityUserEvents.class);
+                i.putExtra(GlobalConstants.KEY_USER_EVENT_ID, eventId);
+                i.setAction(Intent.ACTION_MAIN);
+                i.addCategory(Intent.CATEGORY_LAUNCHER);
+                startActivity(i);
+            }
+        });
+    }
+
     // Internal classes starts here
     public class UserPicsLoader extends  AsyncTask<String, String, String>{
         @Override
@@ -229,6 +252,20 @@ public class TabActivityProfile extends Activity {
         }
     }
     // end of internal classes
+
+    private class LoadUserEvents extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            return HttpManager.getUserEvents(profileId, 0);
+        }
+
+        @Override
+        protected void onPostExecute(String jsonString) {
+            List<EventDetail> eventDetails = JSONParser.getUserEvents(jsonString);
+            displayUserEventsList(eventDetails);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

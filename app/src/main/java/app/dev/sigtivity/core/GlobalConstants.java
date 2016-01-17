@@ -13,4 +13,5 @@ public class GlobalConstants {
     public static final String FRAG_SEARCH_EVENT = "SEARCH_EVENT";
     public static final String FRAG_EVENT_CODE = "EVENT_CODE";
     public static final String FRAG_LOAD_EVENT = "LOAD_EVENT";
+    public static final String KEY_USER_EVENT_ID = "_USER_EVENT_ID";
 }

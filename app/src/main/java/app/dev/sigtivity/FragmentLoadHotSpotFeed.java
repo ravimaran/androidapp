@@ -61,9 +61,10 @@ public class FragmentLoadHotSpotFeed extends Fragment {
     }
 
     private OnHotSpotFragmentInteractionListener mListener;
-    private TabActivityHotSpot context;
+    private Context context;
     private String userId;
     private int eventId;
+    private boolean showCamera;
     private EventDetail eventDetail;
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -85,10 +86,12 @@ public class FragmentLoadHotSpotFeed extends Fragment {
     // Must have empty constructor
     public FragmentLoadHotSpotFeed(){}
 
-    public void setCurrentActivityAndEvent(TabActivityHotSpot context, EventDetail eventDetail, String userId){
+    public void setCurrentActivityAndEvent(Context context, EventDetail eventDetail, String userId, Boolean... params){
         this.context = context;
         this.eventDetail = eventDetail;
         this.userId = userId;
+        assert params.length <=1;
+        boolean showCamera = params.length > 0 ? params[0].booleanValue() : true;
     }
 
     public void updateTakenPhoto(String photoCaption, Bitmap scaledBitmap){
@@ -142,12 +145,16 @@ public class FragmentLoadHotSpotFeed extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
+        if(!showCamera){
+            cameraButton.setVisibility(View.GONE);
+        }
+
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-                context.setFileUri(fileUri);
+                ((TabActivityHotSpot) context).setFileUri(fileUri);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 getActivity().startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }

@@ -39,4 +39,5 @@
     <string name="no_hot_spot_found">There is no event has been organized at this location.</string>
     <string name="ok">OK</string>
     <string name="out_of_hot_spot">You have moved away from the event location. You cannot take any pictures but can watch all the pictures are taken by others from the event.</string>
+    <string name="title_activity_activity_user_events"></string>
 </resources>

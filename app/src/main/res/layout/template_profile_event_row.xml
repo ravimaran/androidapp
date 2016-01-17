@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10sp">
+    <ImageView
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:id="@+id/imgEventIcon"
+        android:src="@drawable/ic_default_profile" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtViewEventTitle"
+        android:text="Jack and Jill Wedding"
+        android:paddingLeft="15sp"
+        android:paddingTop="10sp"
+        android:layout_toRightOf="@id/imgEventIcon"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2015/06/08"
+        android:paddingLeft="15sp"
+        android:layout_toRightOf="@id/imgEventIcon"
+        android:id="@+id/txtViewEventDate"
+        android:layout_below="@id/txtViewEventTitle"/>
+</RelativeLayout>
